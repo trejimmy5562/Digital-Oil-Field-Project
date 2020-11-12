@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no">
+		  
+		<link href="./AssetCSS.css" type="text/css" rel="stylesheet">
+		<!<link href="./GolfStylesheet.css" type="text/css" rel="stylesheet">
+		<link rel="stylesheet" href="https://js.arcgis.com/4.6/esri/css/main.css">
+		
+		<script src="https://js.arcgis.com/4.6/"></script>
+
+		<title>Asset Map Project</title>
+		
+		<script>
+			function openNav() {
+				document.getElementById("mySidenav").style.width = "200px";
+			}
+			function closeNav(){
+				document.getElementById("mySidenav").style.width = "0";
+			}
+			
+		    require([
+		    	"esri/Map",
+				"esri/views/MapView",
+				"esri/widgets/Directions",
+				"esri/layers/FeatureLayer",
+			    "dojo/domReady!",
+				"esri/tasks/RouteTask",
+				"esri/tasks/support/RouteParameters",
+				"esri/tasks/support/FeatureSet",
+				"esri/Graphic"
+		    ], function(Map, MapView, Directions, FeatureLayer, RouteTask, RouteParameters, FeatureSet, Graphic) {
+		
+		    	var map = new Map({
+		    	    basemap: "streets-navigation-vector"
+		    	});
+		
+				var view = new MapView({
+			        container: "basemap1",
+			        map: map,
+			        center: [-98.901236, 31.297255],
+			        zoom: 5,
+					padding: {
+			          right: 120
+			        }
+		    	});
+		    	
+		    	//popup configs
+		    	
+		    	var popupRefinery = {
+				    "title": "Petroleum Refinery",
+				    actions: [{
+						id: "find",
+						image: "refinery.png"
+					}],
+				    "content": [{
+				        "type": "fields",
+				        "fieldInfos": [
+				            {
+				              "fieldName": "Site",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            },
+				            {
+				              "fieldName": "Company",
+				              "label": "Company",
+				              "tooltip": "",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            }
+				        ]
+				    }]
+				};
+				
+				var popupStorage = {
+				    "title": "Natural Gas Underground Storage",
+				    actions: [{
+						id: "find",
+						image: "storage.jpg"
+					}],
+				    "content": [{
+				        "type": "fields",
+				        "fieldInfos": [
+				            {
+				              "fieldName": "Field",
+				              "label": "Name",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            },
+				            {
+				              "fieldName": "Company",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            }
+				        ]
+				    }]
+				};
+				
+				var popupngprocess = {
+				    "title": "Natural Gas Processing Plant",
+				    actions: [{
+						id: "find",
+						image: "ngrefine.png"
+					}],
+				    "content": [{
+				        "type": "fields",
+				        "fieldInfos": [
+				            {
+				              "fieldName": "Plant Name",
+				              "label": "Name",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            },
+				            {
+				              "fieldName": "Owner",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            }
+				        ]
+				    }]
+				};
+				
+				
+				var popuppetroterm = {
+				    "title": "Petroleum Pipe Terminals",
+				    actions: [{
+						id: "find",
+						image: "terminal.png"
+					}],
+				    "content": [{
+				        "type": "fields",
+				        "fieldInfos": [
+				            {
+				              "fieldName": "Site",
+				              "label": "Name",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            },
+				            {
+				              "fieldName": "Company",
+				              "visible": true,
+				              "format": null,
+				              "stringFieldOption": "text-box"
+				            }
+				        ]
+				    }]
+				};
+				
+				//Layer imports
+		    	
+				var Petrorefinery = new FeatureLayer({
+			    	url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/petro_refinery_tx/FeatureServer/0?token=6WPlv0LUYU4hWxEFmOtehXKH_eUZaJx1oSnVra5d_IzDp4OUXwtOOldmjny1AuLVCVuk6GLqM0D22ndj_DVR2hImjD-AuCUbTF08bGTVmVCtL3fJ7dUPg6WQOxr9TgRHGK3kUbBI5zPALJALwq8AJ2c0UUDOnkR6wioUBwqWacF_5iwFK1Ym1p6V8Me2lFe-GWbrF6063Z9eQ1tt2LyCd7SCvK3VehiwJ4bu8xgY8EUGwi5jYf1XBIt7yfcXf5TjF1fvLdzQyw9R2rJqtm3Q9g..",
+			    	visible: true,
+			    	renderer: {
+			        	type: "simple",
+						symbol: {
+							type: "picture-marker",
+			            	url: "https://cdn0.iconfinder.com/data/icons/fuel-energy-vol-12/600/Energy-fuel-industry-oil-refinery-Building-factory-pollution-512.png",
+							width: "12px",
+							height: "12px"
+						}
+			        },
+					outFields: ["Company","Corp", "Site"],
+					popupTemplate: popupRefinery
+			    });
+			    
+			    
+			    var petroterm = new FeatureLayer({
+			    	url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/petro_terminal_tx/FeatureServer/0?token=da6fTko6p6Hc9r5SfPT7J6_9W8HBdjno32-icmyFwp4iFGW9A4UCMKgfjly7NsrzWeE7Cl2rL54lrdc5jrPS3rFmWVyuJjkQGowEfkpeTTvgZESd6RqVttWSE-sUfWLax5TRWnj9GH0Rd8PVtcvsnmLWg6mpUonRwHy9EUqLS0fLVnfDXYFzXYBCOTMvPKz5g-g1Im2sgsTkGoATviBBmcu_q127_D6amC5g158IPr6W2AyUxs5VMo9hDPSOIL1EjG4M-Z2mwol-j1PDupsk4A..",
+			    	visible: true,
+			    	renderer: {
+			        	type: "simple",
+						symbol: {
+							type: "picture-marker",
+			            	url: "https://static.thenounproject.com/png/2081617-200.png",
+							width: "12px",
+							height: "12px"
+						}
+			        },
+					outFields: ["Company","Site", "Latitude", "Longitude"],
+					popupTemplate: popuppetroterm
+			    });
+			    
+			    var ngprocess = new FeatureLayer({
+			    	url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/ng_processplant_tx/FeatureServer/0?token=fXlw2awZjRgXk11WXXATCDAeRQ4I-lnpWkLslMpUfwxfOP7tHlDQXQhXOYUGE0yL_9rRnqhMXZ9lljRTQ-P-iQiU81Iu9fmhdgWAU0beCvNMzqYP2BBdTOnBKWW-_nilRV8sbLEcZff6lCD7RVyjPqyVuCR96A06UbxWSD7MpXr3REuSzztObR4N1X_YnxBcHa3WSkuMKTlhU2B9E9IYxAYpUUiLYWisxCG0sclH13sVDF1KJSxA1YZgMkM9vIX9SBA-7W1b5P_3nuaZceGxDA..",
+			    	visible: true,
+			    	renderer: {
+			        	type: "simple",
+						symbol: {
+							type: "picture-marker",
+			            	url: "https://cdn0.iconfinder.com/data/icons/industrial-1-6/50/29-512.png",
+							width: "12px",
+							height: "12px"
+						}
+			        },
+					outFields: ["Plant Name","Owner", "Latitude", "Longitude"],
+					popupTemplate: popupngprocess
+			    });
+			    
+			    var ngstorage = new FeatureLayer({
+			    	url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/ng_understorag_tx/FeatureServer/0?token=WX3-DSGigqtpHzQOJ_r_lmDzfLDM9XuHuFQ2D1vnG4W2tw9ZUiD18y-RdPQuqvwvI5IYtCap4zr1Mk1pPmxs6NWAntySHH-r2mlq5XpcOH74zEe1l2X6oJ2-WJQfUnxgkXGIMiunnIaRezUegd7eP8EXSNqngi2xm2mHsO9vDV0dXlx1aiRmjxnr1fMBEc5npiWVNlpAV54dD4E2UpVTvq1_qSsAjEmxgMxLLn3j0nn6bSk5enUsn6niH3DYZgrEfMQ02d6Z6VdA2rL6m6ZYAg..",
+			    	visible: true,
+			    	renderer: {
+			        	type: "simple",
+						symbol: {
+							type: "picture-marker",
+			            	url: "https://cdn4.iconfinder.com/data/icons/oil-gas/100/15-2-512.png",
+							width: "12px",
+							height: "12px"
+						}
+			        },
+					outFields: ["Field","Company", "Latitude", "Longitude"],
+					popupTemplate: popupStorage
+			    });
+			    
+			    //add pipelines
+			    var crudePipe = new FeatureLayer({
+			    	url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/crude_pipe_tx/FeatureServer/0?token=SlpxiqVr4-QG1JpWe1hqawYdt3qI8-JG0sxOMqCsSltaT58MzJ6wvIPgWFwWWl8fTjV97mCsiuI1zgIOMEp79LGRZIwrrQmjWoTyFXlY5epcrXDMQJw-PCz-Us-gvbN049Uly4ljHZFKB9n-VjBMpv_Q_b5lxXQqa2f3RRhUbO2guIqb657MBAE4LSRQiX7dJBEfVSTGeN7InWSt4OsIwB4hEoIc79m_AfUiOZ_HlkXOExL4hYnWcvSqrjnj0G5caIVowB7_hFw_6rJC8OsFiw..",
+					visible: true,
+				});
+			    var petroPipe = new FeatureLayer({
+			    	url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/petro_pipe_tx/FeatureServer/0?token=rqlxF6DR7qnsuBdIDLGag_1Zq8LnwMXM9TZKJ5sA1DhuGltOzaFg4OhbR71sy4Exn9QL4-zImn_cXnd4I_U6mDu8CwlQKTEovxsrgNS4KhcyBUB9GkwmKI0GvnKXgZshWjrXCu7snGitMxkzSOlVKXtp4yC1RzZU9LgTn4usSafNuX41emEQt-n1RHepmJmmafy0OCW09w4cZVZ6nf9OFRTxhfFs0EmLypxm_MoBe0wNztekuvm0cJfLWSzyvD-wdFx2o_hxFL7Zg7Sq_dmPIA..",
+					visible: true,
+				});
+				var hglPipe = new FeatureLayer({
+			    	url: "https://services1.arcgis.com/qr14biwnHA6Vis6l/arcgis/rest/services/HGL_tx_pipe/FeatureServer/0?token=6hVsODGfBpk5X_hGc0MOrqoN1CmXwNzkwuy8UmYaEY2plNfS7_1I6WSkxh21orNK9kJRJcqXexPaALHrIt23beSjFjdXCCBHbxSKNrXxplX-mpWZyTUPpre1yftH0-uv1uBML0qU_zFjfJvGPBdDahqRWjmf0njyd5LC9AMeXd7KVOo9T3uDV3Jb9dbu6x76QaR1CYseCNznSAZ7ctaDDJyoG0eeQkpdhs6dq8HhK0JZJa7GFdzLvi57e9GgPWn05hez0Uwk7SMBA3XvtNPJSQ..",
+					visible: true,
+				});
+			    
+			    //add maps
+			    map.add(ngprocess);
+			    map.add(petroterm);
+			    map.add(ngstorage);
+			    map.add(Petrorefinery);
+			    map.add(crudePipe);
+			    map.add(petroPipe);
+			    map.add(hglPipe);
+				
+			    view.when(function() {
+				    var popup = view.popup;
+				    popup.viewModel.on("trigger-action", function(event) {
+				    	if (event.action.id === "find") {
+				        	var attributes = popup.viewModel.selectedFeature.attributes;
+				        	
+				    	}
+				    })
+				});
+				
+				//token = "05Qz4rQZKMo42_5BzA35Y4mwNJQLVTX5ZgcUMVc4OrqSDXpgNxr8rOw_JN-h4x1jfDjiW-sQdq5iJ7G4QtViSHJvDThg9JXHn4mtIPWV79wzvqe8i-EUbB3Iub0xSUCXiGV538ZSxP5CcwaGag0eGA.."
+				
+				var directions = new Directions({
+			        view: view,
+			        routeServiceUrl: "https://utility.arcgis.com/usrsvcs/appservices/Fgh5GT3kmvmgcmaC/rest/services/World/Route/NAServer/Route_World"
+			    });
+			    
+			    view.ui.add(directions, "top-right");
+			    
+		    });
+		</script>
+	</head>
+	
+	<body>
+		<ul class="menu">
+			<li><a><span style="font-size:16px;cursor:pointer" onclick="openNav()">&#9776;</span></a></li>
+			<li><a>Texas Oil and Gas Asset Map</a></li>
+			<!--<li><a id="toggleRoute">Best Bar-hop Route</a></li>
+			<li class="dropdown">
+				<a href="javascript:void(0)" class="dropbtn">Age</a>
+				<div class="dropdown-content">
+					<a id="toggleAge1">18-20</a>
+					<a id="toggleAge2">21+</a>
+				</div>
+			</li>
+			<li><a id="ageDisplay">21+</a></li>-->
+		</ul>
+		
+		<div id="mySidenav" class="sidenav">
+			<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+			<ul>
+				<li><a href="#">Bar Golf</a></li>
+				<li><a href="#">Tipsy Turtle</a></li>
+				<li><a href="#">O'Bannon's</a></li>
+				<li><a href="#">Dry Bean Saloon</a></li>
+			</ul>
+			
+			<!--<div class="clear"></div>-->
+		</div>
+		<div id="basemap1"></div>
+		
+	</body>
+	
+</html>
