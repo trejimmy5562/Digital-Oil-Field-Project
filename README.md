@@ -8,7 +8,7 @@ The code can be found in the code folder along with some icons and images utiliz
 ### Asset Management Webmap:
 ![Asset Management Web map](Images/Webmap.png)
 
-Here you can see each asset class has its own icon, the routing interface hangs from the top right of the screen. The routing mechanism can be triggered by typing or clicking, which is a great addition for those who do not know the name of the well or refiniery they are mapping to, for example if they just wanted the closest one.
+Here you can see each asset class has its own icon, the routing interface hangs from the top right of the screen. The routing mechanism can be triggered by typing or clicking, which is a great addition for those who do not know the name of the well or refinery they are mapping to, for example if they just wanted the closest one.
 
 ### Here is a closeup of the routing feature in action:
 ![Asset Management Routing](Images/routing.png)
